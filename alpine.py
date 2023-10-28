@@ -56,6 +56,10 @@ def main(_):
   no_license_count = 0
 
   for package_license in package_licenses:
+    # Skip util-linux as the license field in Alpine is three lines long
+    # which would massively complicate parsing.
+    if package_license[0] == 'util-linux':
+      continue
     # Skip packages that already have license info
     if package_license[1] != 'UNKNOWN':
       continue
