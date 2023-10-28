@@ -2,6 +2,7 @@
 
 import logging
 import os
+import re
 
 from absl import app
 from absl import flags
@@ -19,12 +20,6 @@ flags.DEFINE_string('input_path', None,
 flags.mark_flag_as_required('spack_checkout')
 flags.mark_flag_as_required('input_path')
 
-directives = [
-    'version(', 'conflicts(', 'depends_on(', 'extends(', 'maintainers(',
-    'license(', 'provides(', 'patch(', 'variant(', 'resource(', 'build_system(',
-    'requires('
-]
-
 
 def main(_):
   license_pairs = utils.load_license_csv(FLAGS.input_path)
@@ -40,14 +35,38 @@ def main(_):
       line_index = 0
       to_insert_index = 0
       while line_index < len(package_file_lines):
-        for directive in directives:
-          if package_file_lines[line_index].strip().startswith(directive):
-            while line_index < len(package_file_lines) and package_file_lines[
-                line_index].strip() != '':
-              line_index += 1
-            to_insert_index = line_index
-            break
+        if package_file_lines[line_index].strip().startswith('version('):
+          # Some of the version fields have (multiple) comments on them
+          while package_file_lines[line_index - 1].strip().startswith('#'):
+            line_index -= 1
+          # Some of the version fields are packed directly between variables.
+          # If that's the case, we need to create some space.
+          if re.match(r'^.* = ', package_file_lines[line_index - 1].strip()):
+            package_file_lines.insert(line_index, f'\n')
+            line_index += 1
+          # Some of the version fields are package directly under other
+          # directives, particularly the maintainers directive. Again, we need
+          # to create some space.
+          if package_file_lines[line_index - 1].strip().startswith('maintainers('):
+            package_file_lines.insert(line_index - 1, '\n')
+          # Some of the version fields are under multiple layers of control
+          # flow. If we detect this, just walk up to the top.
+          while package_file_lines[line_index].startswith('     '):
+            line_index -= 1
+          assert(package_file_lines[line_index - 1].strip() == '')
+          to_insert_index = line_index - 1
+          break
         line_index += 1
+
+    has_license = False
+
+    for file_line in package_file_lines:
+      if file_line.strip().startswith('license('):
+        has_license = True
+        break
+
+    if has_license:
+      continue
 
     license_string = f'    license("{license}")\n'
 
