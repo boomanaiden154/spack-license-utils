@@ -86,9 +86,10 @@ def main(_):
   packages_without_license = 0
 
   for package_license in tqdm(package_licenses, miniters=1):
-    # Skip non-python packages
+    # Skip packages that already have license info
     if package_license[1] != 'UNKNOWN':
       continue
+    # Skip non-python packages
     if not package_license[0].startswith('py-'):
       continue
 
