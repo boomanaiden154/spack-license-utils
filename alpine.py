@@ -29,7 +29,12 @@ def get_license(package_name, package_repository):
     apk_lines = apkbuild_file.readlines()
     for line in apk_lines:
       if line.startswith('license='):
-        return line[9:-2]
+        line_parts = line.split('"')
+        if len(line_parts) < 2:
+          # If we're reaching this path, it's probably because there aren't
+          # any quotes around the license string
+          return line[8:-1]
+        return line_parts[1]
 
 
 def get_repository(package_name):
