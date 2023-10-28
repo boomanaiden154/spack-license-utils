@@ -21,7 +21,13 @@ def main(_):
     for package in packages:
       pkg_class = spack.repo.PATH.get_pkg_class(package)
       pkg = pkg_class(spack.spec.Spec(package))
-      output_file.write(f'{pkg.name},UNKNOWN\n')
+
+      license = 'UNKNOWN'
+      package_licenses = list(pkg.licenses.values())
+      if len(package_licenses) > 0:
+        license = package_licenses[0]
+
+      output_file.write(f'{pkg.name},{license}\n')
 
 
 if __name__ == '__main__':
