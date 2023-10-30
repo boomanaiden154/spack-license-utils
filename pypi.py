@@ -26,15 +26,6 @@ flags.mark_flag_as_required('input_file')
 flags.mark_flag_as_required('output_file')
 
 
-def get_license_list():
-  license_list = {}
-  with open(FLAGS.license_json) as license_list_file:
-    licenses_json = json.load(license_list_file)
-    for lic in licenses_json['licenses']:
-      license_list[lic['licenseId']] = True
-  return license_list
-
-
 def get_package_map():
   package_map = {}
 
@@ -73,7 +64,7 @@ def get_license_info(package_name, license_list):
 
 
 def main(_):
-  license_list = get_license_list()
+  license_list = utils.get_license_list(FLAGS.license_json)
 
   package_licenses = utils.load_license_csv(FLAGS.input_file)
 

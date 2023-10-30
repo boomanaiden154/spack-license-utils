@@ -1,5 +1,7 @@
 """Some utilities for the license collection infra."""
 
+import json
+
 
 def load_license_csv(license_csv_path):
   package_license_pairs = []
@@ -47,3 +49,12 @@ def upgrade_deprecated_spdx_id(spdx_id):
       return 'LGPL-3.0-or-later'
     case _:
       return 'UNKNOWN'
+
+
+def get_license_list(license_file_path):
+  license_list = {}
+  with open(license_file_path) as license_list_file:
+    licenses_json = json.load(license_list_file)
+    for lic in licenses_json['licenses']:
+      license_list[lic['licenseId']] = True
+  return license_list
