@@ -50,9 +50,15 @@ def main(_):
           if package_file_lines[line_index -
                                 1].strip().startswith('maintainers('):
             package_file_lines.insert(line_index - 1, '\n')
+          if package_file_lines[line_index - 1].strip().startswith('patch('):
+            package_file_lines.insert(line_index - 1, '\n')
           # Some of the version fields are under multiple layers of control
           # flow. If we detect this, just walk up to the top.
           while package_file_lines[line_index].startswith('     '):
+            line_index -= 1
+          # Do another round of comment walking to handle the case where this a
+          # comment on top of the control flow.
+          while package_file_lines[line_index - 1].strip().startswith('#'):
             line_index -= 1
           assert (package_file_lines[line_index - 1].strip() == '')
           to_insert_index = line_index - 1
