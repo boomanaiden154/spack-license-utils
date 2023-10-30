@@ -47,13 +47,14 @@ def main(_):
           # Some of the version fields are package directly under other
           # directives, particularly the maintainers directive. Again, we need
           # to create some space.
-          if package_file_lines[line_index - 1].strip().startswith('maintainers('):
+          if package_file_lines[line_index -
+                                1].strip().startswith('maintainers('):
             package_file_lines.insert(line_index - 1, '\n')
           # Some of the version fields are under multiple layers of control
           # flow. If we detect this, just walk up to the top.
           while package_file_lines[line_index].startswith('     '):
             line_index -= 1
-          assert(package_file_lines[line_index - 1].strip() == '')
+          assert (package_file_lines[line_index - 1].strip() == '')
           to_insert_index = line_index - 1
           break
         line_index += 1
