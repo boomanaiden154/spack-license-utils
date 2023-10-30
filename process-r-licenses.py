@@ -157,17 +157,40 @@ def canonicalize_license_expression(license_expression):
 
 
 def main(_):
-  r_licenses = {}
+  r_package_licenses = {}
 
   with open(FLAGS.r_licenses_file) as r_licenses_file:
-    r_package_licenses = r_licenses_file.readlines()
-    for r_package_license in r_package_licenses[1:]:
+    r_package_license_lines = r_licenses_file.readlines()
+    for r_package_license in r_package_license_lines[1:]:
       package_license_parts = r_package_license.split(',')
       license_text = package_license_parts[2][1:-2]
-      r_licenses[license_text] = canonicalize_license_expression(license_text)
+      package_name = package_license_parts[0][1:-1]
+      r_package_licenses[package_name] = canonicalize_license_expression(
+          license_text)
 
-  for r_license in r_licenses:
-    print(f'{r_license},{r_licenses[r_license]}')
+  package_licenses = utils.load_license_csv(FLAGS.input_file)
+
+  has_license_count = 0
+  r_no_license_count = 0
+
+  for package_license in package_licenses:
+    # Skip packages that already have license info
+    if package_license[1] != 'UNKNOWN':
+      continue
+    if not package_license[0].startswith('r-'):
+      continue
+    if package_license[0][2:] in r_package_licenses:
+      package_license[1] = r_package_licenses[package_license[0][2:]]
+      has_license_count += 1
+    else:
+      r_no_license_count += 1
+
+  utils.write_license_csv(FLAGS.output_file, package_licenses)
+
+  logging.info(f'Found license information for {has_license_count} packages.')
+  logging.info(
+      f'Unable to find license information for {r_no_license_count} R packages.'
+  )
 
 
 if __name__ == '__main__':
