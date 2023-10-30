@@ -49,3 +49,19 @@ script to tag packages with license information from PyPI:
 python3 ./pypi.py --input_file=/tmp/packages.csv --output_file=/tmp/packages_pypi.csv
 ```
 
+### CRAN
+
+CRAN contains a multitude of R packages with associated license information.
+To pull information from CRAN and match it against Spack packages, start off
+by grabbing license information from CRAN:
+
+```shell
+Rscript gather-r-licenses.R
+```
+
+Then you can associate the information with Spack packages:
+
+```shell
+python3 ./cran.py --input_file=/tmp/packages.csv --output_file=/tmp/packages_cran.csv --r_licenses_file=./r-licenses.csv
+```
+
