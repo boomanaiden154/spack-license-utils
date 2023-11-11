@@ -9,6 +9,7 @@ from absl import flags
 from absl import app
 
 from spack_license_utils import utils
+from spack_license_utils import alpine
 
 FLAGS = flags.FLAGS
 
@@ -19,22 +20,6 @@ flags.DEFINE_string('output_file', None, 'The path to the output file.')
 flags.mark_flag_as_required('input_file')
 flags.mark_flag_as_required('aports_dir')
 flags.mark_flag_as_required('output_file')
-
-
-def get_license(package_name, package_repository):
-  # This assums that the package exists
-  apkbuild_path = os.path.join(FLAGS.aports_dir, package_repository,
-                               package_name, 'APKBUILD')
-  with open(apkbuild_path) as apkbuild_file:
-    apk_lines = apkbuild_file.readlines()
-    for line in apk_lines:
-      if line.startswith('license='):
-        line_parts = line.split('"')
-        if len(line_parts) < 2:
-          # If we're reaching this path, it's probably because there aren't
-          # any quotes around the license string
-          return line[8:-1]
-        return line_parts[1]
 
 
 def get_repository(package_name):
@@ -66,7 +51,8 @@ def main(_):
     repository = get_repository(package_license[0])
     if repository:
       # We found a package that exists
-      pkg_license = get_license(package_license[0], repository)
+      pkg_license = alpine.get_license(package_license[0], repository,
+                                       FLAGS.aports_dir)
       package_license[1] = pkg_license
       has_license_count += 1
     else:
