@@ -3,6 +3,7 @@ identifiers contained within the repository to improve the license
 information available from there."""
 
 import logging
+import os
 
 from absl import flags
 from absl import app
@@ -19,10 +20,16 @@ flags.mark_flag_as_required('aports_dir')
 def get_package_list(aports_dir):
   packages = []
   for main_package in os.listdir(os.path.join(aports_dir, 'main')):
+    if main_package == '.rootbld-repositories':
+      continue
     packages.append(('main', main_package))
   for community_package in os.listdir(os.path.join(aports_dir, 'community')):
+    if main_package == '.rootbld-repositories':
+      continue
     packages.append(('community', community_package))
   for testing_package in os.listdir(os.path.join(aports_dir, 'testing')):
+    if main_package == '.rootbld-repositories':
+      continue
     packages.append(('testing', testing_package))
   return packages
 
@@ -71,7 +78,7 @@ def main(_):
     license_value = get_license(package[1], package[0])
     license_valid = validate_license(license_value, license_map)
     if not license_valid:
-      logging.info(package)
+      logging.info(f'{package[0]}/{package[1]} has potentially invalid license {license_value}')
 
 
 if __name__ == '__main__':
