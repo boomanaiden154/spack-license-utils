@@ -58,3 +58,23 @@ def get_license_list(license_file_path):
     for lic in licenses_json['licenses']:
       license_list[lic['licenseId']] = True
   return license_list
+
+
+def validate_license(spdx_expression, license_map):
+  spdx_expression = spdx_expression.replace('(', '').replace(')', '')
+  removed_and_parts = [
+      removed_and.strip() for removed_and in spdx_expression.split('AND')
+  ]
+  removed_or_parts = []
+
+  for removed_and_part in removed_and_parts:
+    removed_or_parts.extend(
+        [removed_or.strip() for removed_or in removed_and_part.split('OR')])
+
+  for spdx_id in removed_or_parts:
+    if spdx_id == 'custom':
+      continue
+    if spdx_id not in license_map:
+      return False
+
+  return True

@@ -22,26 +22,6 @@ flags.DEFINE_string(
 flags.mark_flag_as_required('input_file')
 
 
-def validate_license(spdx_expression, license_map):
-  spdx_expression = spdx_expression.replace('(', '').replace(')', '')
-  removed_and_parts = [
-      removed_and.strip() for removed_and in spdx_expression.split('AND')
-  ]
-  removed_or_parts = []
-
-  for removed_and_part in removed_and_parts:
-    removed_or_parts.extend(
-        [removed_or.strip() for removed_or in removed_and_part.split('OR')])
-
-  for spdx_id in removed_or_parts:
-    if spdx_id == 'custom':
-      continue
-    if spdx_id not in license_map:
-      return False
-
-  return True
-
-
 def main(_):
   package_licenses = utils.load_license_csv(FLAGS.input_file)
 
@@ -50,7 +30,7 @@ def main(_):
   for package_license in package_licenses:
     if package_license[1] == 'UNKNOWN':
       continue
-    if not validate_license(package_license[1], license_map):
+    if not utils.validate_license(package_license[1], license_map):
       logging.warning(
           f'{package_license[0]} has invalid license string "{package_license[1]}"'
       )
