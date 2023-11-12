@@ -91,6 +91,7 @@ def main(_):
       if pkg_license:
         packages_with_license += 1
         package_license[1] = pkg_license
+        package_license[2] = 'Pypi'
       else:
         packages_without_license += 1
 

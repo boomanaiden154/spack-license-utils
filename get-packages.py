@@ -27,7 +27,7 @@ def main(_):
       if len(package_licenses) > 0:
         license = package_licenses[0]
 
-      output_file.write(f'{pkg.name},{license}\n')
+      output_file.write(f'{pkg.name},{license},NONE\n')
 
 
 if __name__ == '__main__':

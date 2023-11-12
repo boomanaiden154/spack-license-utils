@@ -105,6 +105,7 @@ def main(_):
     if package_license[0] in detected_license_map:
       license_to_use = detected_license_map[package_license[0]]
       package_license[1] = utils.upgrade_deprecated_spdx_id(license_to_use)
+      package_license[2] = 'Detected'
 
   utils.write_license_csv(FLAGS.output_file, package_licenses)
 

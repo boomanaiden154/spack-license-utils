@@ -181,6 +181,7 @@ def main(_):
       continue
     if package_license[0][2:] in r_package_licenses:
       package_license[1] = r_package_licenses[package_license[0][2:]]
+      package_license[2] = 'Cran'
       has_license_count += 1
     else:
       r_no_license_count += 1

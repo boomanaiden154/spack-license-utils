@@ -54,6 +54,7 @@ def main(_):
       pkg_license = alpine.get_license(package_license[0], repository,
                                        FLAGS.aports_dir)
       package_license[1] = pkg_license
+      package_license[2] = 'Alpine'
       has_license_count += 1
     else:
       no_license_count += 1
