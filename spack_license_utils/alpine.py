@@ -11,11 +11,11 @@ def get_package_list(aports_dir):
       continue
     packages.append(('main', main_package))
   for community_package in os.listdir(os.path.join(aports_dir, 'community')):
-    if main_package == '.rootbld-repositories':
+    if community_package == '.rootbld-repositories':
       continue
     packages.append(('community', community_package))
   for testing_package in os.listdir(os.path.join(aports_dir, 'testing')):
-    if main_package == '.rootbld-repositories':
+    if testing_package == '.rootbld-repositories':
       continue
     packages.append(('testing', testing_package))
   return packages

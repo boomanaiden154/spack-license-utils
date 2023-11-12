@@ -60,6 +60,15 @@ def get_license_list(license_file_path):
   return license_list
 
 
+def validate_exception(exception_string):
+  match (exception_string):
+    case 'OpenSSL-Exception':
+      return True
+    case 'LLVM-exception':
+      return True
+  return False
+
+
 def validate_license(spdx_expression, license_map):
   spdx_expression = spdx_expression.replace('(', '').replace(')', '')
   removed_and_parts = [
@@ -72,7 +81,15 @@ def validate_license(spdx_expression, license_map):
         [removed_or.strip() for removed_or in removed_and_part.split('OR')])
 
   for spdx_id in removed_or_parts:
+    if 'WITH' in spdx_id:
+      id_parts = spdx_id.split('WITH')
+      spdx_id = id_parts[0].strip()
+      exception = id_parts[1].strip()
+      if not validate_exception(exception):
+        return False
     if spdx_id == 'custom':
+      continue
+    elif spdx_id == 'Public-Domain':
       continue
     if spdx_id not in license_map:
       return False

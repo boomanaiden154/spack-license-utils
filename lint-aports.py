@@ -29,7 +29,7 @@ def main(_):
     license_value = alpine.get_license(package[1], package[0], FLAGS.aports_dir)
     license_valid = utils.validate_license(license_value, license_map)
     if not license_valid:
-      logging.info(
+      print(
           f'{package[0]}/{package[1]} has potentially invalid license {license_value}'
       )
 
