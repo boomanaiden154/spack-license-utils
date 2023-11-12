@@ -65,3 +65,23 @@ Then you can associate the information with Spack packages:
 python3 ./cran.py --input_file=/tmp/packages.csv --output_file=/tmp/packages_cran.csv --r_licenses_file=./r-licenses.csv
 ```
 
+## License Detection
+
+Into addition to taking advantage of other package repositories, we can also
+directly download the package source using `spack spec` and run a license detector
+over the source to detect information. The `spack_stage.py` script does this:
+
+```shell
+python3 ./spack_stage.py --input_file=/tmp/packages.csv --output_file=/tmp/packages_detected.csv
+```
+
+## License Linting
+
+After collecting license information, some of the license expressions might not
+be conformant to the SPDX Expression specification. To fix this, there is a linting
+tool that deletes any expressions that are not conformant to the SPDX spec. To
+run the script, do the following:
+
+```shell
+python3 ./lint.py --input_file=/tmp/packages.csv --output_file=/tmp/packages_linted.csv
+```
