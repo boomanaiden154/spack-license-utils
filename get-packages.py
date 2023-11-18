@@ -23,11 +23,13 @@ def main(_):
       pkg = pkg_class(spack.spec.Spec(package))
 
       license = 'UNKNOWN'
+      license_source = 'NONE'
       package_licenses = list(pkg.licenses.values())
       if len(package_licenses) > 0:
         license = package_licenses[0]
+        license_source = 'Spack'
 
-      output_file.write(f'{pkg.name},{license},NONE\n')
+      output_file.write(f'{pkg.name},{license},{license_source}\n')
 
 
 if __name__ == '__main__':
