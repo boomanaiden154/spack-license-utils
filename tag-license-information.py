@@ -23,7 +23,9 @@ flags.mark_flag_as_required('input_path')
 
 def main(_):
   license_pairs = utils.load_license_csv(FLAGS.input_path)
-  for package_name, license in license_pairs:
+  for package_name, license, license_source in license_pairs:
+    if license_source == 'Spack':
+      continue
     if license == 'UNKNOWN':
       continue
     print(package_name)
@@ -77,12 +79,18 @@ def main(_):
 
     license_string = f'    license("{license}")\n'
 
+    comment_string = '    # License needs verification, see https://github.com/spack/spack/issues/41155'
+
     if to_insert_index == len(package_file_lines):
       package_file_lines.append('\n')
       package_file_lines.append(license_string)
+      package_file_lines.append('\n')
+      package_file_lines.append(comment_string)
     else:
-      package_file_lines.insert(to_insert_index + 1, license_string)
-      package_file_lines.insert(to_insert_index + 2, f'\n')
+      package_file_lines.insert(to_insert_index + 1, comment_string)
+      package_file_lines.insert(to_insert_index + 2, '\n')
+      package_file_lines.insert(to_insert_index + 3, license_string)
+      package_file_lines.insert(to_insert_index + 4, '\n')
 
     with open(package_file_path, 'w') as package_file:
       for line in package_file_lines:

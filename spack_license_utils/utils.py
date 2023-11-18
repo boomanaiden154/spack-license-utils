@@ -10,6 +10,7 @@ def load_license_csv(license_csv_path):
     for line in package_license_lines:
       package_license_pair = line.split(',')
       assert len(package_license_pair) == 3
+      package_license_pair[0] = package_license_pair[0].strip()
       package_license_pair[1] = package_license_pair[1].strip()
       package_license_pair[2] = package_license_pair[2].strip()
       package_license_pairs.append(package_license_pair)
